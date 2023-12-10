@@ -1,5 +1,5 @@
 #해외 사이트 배당률 있는 경기만 가져옴
-
+'''
 import os
 import pandas as pd
 import requests
@@ -22,11 +22,11 @@ status_code = response.status_code
 result = response.text
 
 print(result)
-
-#print(result)
 '''
-import argparse
+#print(result)
 
+import argparse
+import pandas as pd
 import requests
 
 
@@ -100,7 +100,7 @@ else:
     odds_df = pd.json_normalize(odds_json)
     
     # CSV 파일로 저장
-    odds_df.to_csv('odds_data.csv', index=False)
+    odds_df.to_csv('odds_data_test.csv', index=False)
 
     # Check the usage quota
     print('Remaining requests', odds_response.headers['x-requests-remaining'])
@@ -108,5 +108,5 @@ else:
     print('Number of events:', len(odds_json))
     print(odds_json)
 
-'''
+
 # 오늘 경기 배당률
