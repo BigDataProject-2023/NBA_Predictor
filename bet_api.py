@@ -28,7 +28,7 @@ print(result)
 import argparse
 import pandas as pd
 import requests
-
+import json
 
 # Obtain the api key that was passed in from the command line
 parser = argparse.ArgumentParser(description='Sample V4')
@@ -68,7 +68,7 @@ if sports_response.status_code != 200:
     print(f'Failed to get sports: status_code {sports_response.status_code}, response body {sports_response.text}')
 
 else:
-    print('List of in season sports:', sports_response.json())
+    print('available')
 
 
 
@@ -102,11 +102,47 @@ else:
     # CSV 파일로 저장
     odds_df.to_csv('odds_data_test.csv', index=False)
 
+    json_file_path = 'odds.json'
+
+    # Open the file in write mode and use json.dump to write the data
+    with open(json_file_path, 'w') as json_file:
+        json.dump(odds_json, json_file, indent=2)
     # Check the usage quota
-    print('Remaining requests', odds_response.headers['x-requests-remaining'])
-    print('Used requests', odds_response.headers['x-requests-used'])
-    print('Number of events:', len(odds_json))
-    print(odds_json)
+    #print('Remaining requests', odds_response.headers['x-requests-remaining'])
+    #print('Used requests', odds_response.headers['x-requests-used'])
+    #print('Number of events:', len(odds_json))
+    #print(odds_json)
 
+import csv
 
+# 파일 경로
+json_file_path = '/Users/bagjaeyun/Desktop/basketball_reference_webcrawler-master/odds.json'
+csv_file_path = '/Users/bagjaeyun/Desktop/basketball_reference_webcrawler-master/todayodds.csv'
+
+# JSON 파일 읽기
+with open(json_file_path) as file:
+    datas = json.load(file)
+
+# CSV 파일 쓰기
+with open(csv_file_path, mode='w', newline='') as csv_file:
+    fieldnames = ['name', 'price', 'point','win_prob']
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+    # CSV 파일의 헤더 작성
+    writer.writeheader()
+
+    # JSON 데이터에서 필요한 정보 추출하여 CSV 파일에 쓰기
+    for k in datas:
+        for i in range(len(k['bookmakers'])):
+            if k['bookmakers'][i]['key'] == 'fanduel':
+                outcomes = k['bookmakers'][i]['markets'][1]['outcomes']
+                for outcome in outcomes:
+                    writer.writerow({
+                        'name': outcome['name'],
+                        'price': outcome['price'],
+                        'point': outcome.get('point', None),  # 'point' 키가 없으면 None으로 기본값 설정
+                        'win_prob': 1/outcome['price']
+                    })
+
+    
 # 오늘 경기 배당률
