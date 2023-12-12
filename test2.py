@@ -10,7 +10,7 @@ import xgb_runner
 from src.Utils.Dictionaries import team_index_current
 from src.Utils.tools import create_todays_games_from_odds, get_json_data, to_data_frame, get_todays_games_json, create_todays_games, save_games_to_csv, save_json_to_csv
 
-'''
+
 todays_games_url = 'https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2023/scores/00_todays_scores.json'
 data_url = 'https://stats.nba.com/stats/leaguedashteamstats?' \
            'Conference=&DateFrom=&DateTo=&Division=&GameScope=&' \
@@ -20,17 +20,13 @@ data_url = 'https://stats.nba.com/stats/leaguedashteamstats?' \
            'PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&' \
            'Season=2023-24&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&' \
            'StarterBench=&TeamID=0&TwoWay=0&VsConference=&VsDivision='
-'''
 
 
-def createTodaysGames(games, df, odds):
+def createTodaysGames(games, odds):
     match_data = []
     todays_games_uo = []
     home_team_odds = []
     away_team_odds = []
-
-    home_team_days_rest = []
-    away_team_days_rest = []
 
     for game in games:
         home_team = game[0]
@@ -50,41 +46,7 @@ def createTodaysGames(games, df, odds):
             home_team_odds.append(input(home_team + ' odds: '))
             away_team_odds.append(input(away_team + ' odds: '))
 
-        # calculate days rest for both teams
-        schedule_df = pd.read_csv('Data/nba-2023-UTC.csv', parse_dates=['Date'], date_format='%d/%m/%Y %H:%M')
-        home_games = schedule_df[(schedule_df['Home Team'] == home_team) | (schedule_df['Away Team'] == home_team)]
-        away_games = schedule_df[(schedule_df['Home Team'] == away_team) | (schedule_df['Away Team'] == away_team)]
-        previous_home_games = home_games.loc[schedule_df['Date'] <= datetime.today()].sort_values('Date',ascending=False).head(1)['Date']
-        previous_away_games = away_games.loc[schedule_df['Date'] <= datetime.today()].sort_values('Date',ascending=False).head(1)['Date']
-        if len(previous_home_games) > 0:
-            last_home_date = previous_home_games.iloc[0]
-            home_days_off = timedelta(days=1) + datetime.today() - last_home_date
-        else:
-            home_days_off = timedelta(days=7)
-        if len(previous_away_games) > 0:
-            last_away_date = previous_away_games.iloc[0]
-            away_days_off = timedelta(days=1) + datetime.today() - last_away_date
-        else:
-            away_days_off = timedelta(days=7)
-        # print(f"{away_team} days off: {away_days_off.days} @ {home_team} days off: {home_days_off.days}")
-
-        home_team_days_rest.append(home_days_off.days)
-        away_team_days_rest.append(away_days_off.days)
-        home_team_series = df.iloc[team_index_current.get(home_team)]
-        away_team_series = df.iloc[team_index_current.get(away_team)]
-        stats = pd.concat([home_team_series, away_team_series])
-        stats['Days-Rest-Home'] = home_days_off.days
-        stats['Days-Rest-Away'] = away_days_off.days
-        match_data.append(stats)
-
-    games_data_frame = pd.concat(match_data, ignore_index=True, axis=1)
-    games_data_frame = games_data_frame.T
-
-    frame_ml = games_data_frame.drop(columns=['TEAM_ID', 'TEAM_NAME'])
-    data = frame_ml.values
-    data = data.astype(float)
-
-    return data, todays_games_uo, frame_ml, home_team_odds, away_team_odds
+    return todays_games_uo,  home_team_odds, away_team_odds
 
 
 def main():
@@ -117,9 +79,11 @@ def main():
         #data = tf.keras.utils.normalize(data, axis=1)
         #NN_Runner.nn_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds, args.kc)
         #print("-------------------------------------------------------")
+    todays_games_uo,  home_team_odds, away_team_odds = createTodaysGames(games,odds)
+    
     if args.xgb:
         print("---------------XGBoost Model Predictions---------------")
-        xgb_runner.xgb_runner(data, games)
+        xgb_runner.xgb_runner(data, games, todays_games_uo,  home_team_odds, away_team_odds)
         print("-------------------------------------------------------")
     #if args.A:
         #print("---------------XGBoost Model Predictions---------------")

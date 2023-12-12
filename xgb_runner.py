@@ -9,12 +9,14 @@ from sklearn.preprocessing import StandardScaler
 init()
 xgb_ml = xgb.Booster()
 xgb_ml.load_model('/Users/bagjaeyun/Desktop/basketball_reference_webcrawler-master/models/XGBoost_43.8%_ML.json')
+#y = data['Home-Team-Win'].values => winning confidence for home teams'
 xgb_uo = xgb.Booster()
 xgb_uo.load_model('/Users/bagjaeyun/Desktop/basketball_reference_webcrawler-master/models/XGBoost_47.7%_OU.json')
+#y = data['OU-cover'].values => OU rates
 
-# 'Home_Prob', 'Away_Prob', 'Home_Odds', 'Away_Odds'
+# features : 'Home_Prob', 'Away_Prob', 'Home_Odds', 'Away_Odds'
 
-def xgb_runner(data, games):
+def xgb_runner(data, games, todays_games_uo,  home_team_odds, away_team_odds):
     
     #data column
     #[home_team,
@@ -25,12 +27,10 @@ def xgb_runner(data, games):
     # away_price,
     # away_point,
     # away_win_prob]
-
     
     ml_predictions_array = []
 
     data = pd.DataFrame(data)
-
 
         # 필요한 열만 선택하여 새로운 데이터프레임 생성
     new_df = data[['home_win_prob', 'away_win_prob', 'home_price', 'away_price']].copy()
@@ -63,36 +63,32 @@ def xgb_runner(data, games):
         winner = int(np.argmax(ml_predictions_array[count]))
         under_over = int(np.argmax(ou_predictions_array[count]))
         winner_confidence = ml_predictions_array[count]
-        #print(f"game: {game}")
-        #print(f"winner: {winner}")
-        #print(f"underover: {under_over}")
-        #print(f"winner_conf: {winner_confidence}")
         un_confidence = ou_predictions_array[count]
-        #print(f"un_confidence: {un_confidence}")
-        if winner == 1:
+
+        if winner_confidence >=0.5:
             winner_confidence = round(winner_confidence[0] * 100, 1)
             if under_over == 0:
                 un_confidence = round(ou_predictions_array[count][0][0] * 100, 1)
                 print(
                     Fore.GREEN + home_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ' vs ' + Fore.RED + away_team + Style.RESET_ALL + ': ' +
-                    Fore.MAGENTA + 'UNDER ' + Style.RESET_ALL  + Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
+                    Fore.MAGENTA + 'UNDER ' + Style.RESET_ALL  + str(todays_games_uo[count]) + Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
             else:
                 un_confidence = round(ou_predictions_array[count][0][1] * 100, 1)
                 print(
                     Fore.GREEN + home_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ' vs ' + Fore.RED + away_team + Style.RESET_ALL + ': ' +
-                    Fore.BLUE + 'OVER ' + Style.RESET_ALL + Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
+                    Fore.BLUE + 'OVER ' + Style.RESET_ALL +  str(todays_games_uo[count])+ Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
         else:
             winner_confidence = round(winner_confidence[0] * 100, 1)
             if under_over == 0:
                 un_confidence = round(ou_predictions_array[count][0][0] * 100, 1)
                 print(
                     Fore.RED + home_team + Style.RESET_ALL + ' vs ' + Fore.GREEN + away_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ': ' +
-                    Fore.MAGENTA + 'UNDER ' + Style.RESET_ALL  + Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
+                    Fore.MAGENTA + 'UNDER ' + Style.RESET_ALL + str(todays_games_uo[count]) + Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
             else:
                 un_confidence = round(ou_predictions_array[count][0][1] * 100, 1)
                 print(
                     Fore.RED + home_team + Style.RESET_ALL + ' vs ' + Fore.GREEN + away_team + Style.RESET_ALL + Fore.CYAN + f" ({winner_confidence}%)" + Style.RESET_ALL + ': ' +
-                    Fore.BLUE + 'OVER ' + Style.RESET_ALL  + Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
+                    Fore.BLUE + 'OVER ' + Style.RESET_ALL + str(todays_games_uo[count]) + Style.RESET_ALL + Fore.CYAN + f" ({un_confidence}%)" + Style.RESET_ALL)
         count += 1
 '''
     if kelly_criterion:
