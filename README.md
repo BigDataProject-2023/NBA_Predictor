@@ -26,4 +26,4 @@ where the season for which data should be collected is given by the  ```season``
 - `merged data` : merge odds data & season data with [date, home, away] ➡️ data_preprocess.py
 
 ## Result
-![result] (./result2.png)
+![result] (result2.png)
