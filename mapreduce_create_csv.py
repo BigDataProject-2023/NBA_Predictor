@@ -1,3 +1,7 @@
+# 실행방법 :
+# python3.6 mapreduce_create_csv.py  -r hadoop  --hadoop-streaming-jar /usr/hdp/3.0.1.0-187/hadoop-mapreduce/hadoop-streaming.jar  --python-bin /usr/bin/python3.6
+# hadoop fs -copyFromLocal mapreduce/season_detailed_mapreduce /user/maria_dev/NBA_Predictor/mapreduce/
+
 import pandas as pd
 import csv
 import os
@@ -6,7 +10,6 @@ import os
 current_directory = os.path.dirname(os.path.abspath(__file__))
 mapreduce_directory = os.path.join(current_directory, "mapreduce")
 new_directory = os.path.join(mapreduce_directory, "season_detailed_mapreduce")
-os.makedirs(new_directory)
 
 # 시즌별 디렉토리 경로 리스트
 directories = [

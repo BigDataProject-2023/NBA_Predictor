@@ -1,3 +1,7 @@
+# 실행방법 :
+# python3.6 mapreduce_create_csv.py  -r hadoop  --hadoop-streaming-jar /usr/hdp/3.0.1.0-187/hadoop-mapreduce/hadoop-streaming.jar  --python-bin /usr/bin/python3.6
+# hadoop fs -copyFromLocal mapreduce/season_join_data /user/maria_dev/NBA_Predictor/mapreduce/
+
 import pandas as pd
 import os
 
@@ -70,7 +74,6 @@ def merge_season_data(year):
     result_data = home_renamed.merge(away_renamed, on=basic_column)
 
     # 조인된 데이터를 CSV 파일로 저장
-    os.makedirs("mapreduce/season_join_data", exist_ok=True)
     result_data.to_csv(f"mapreduce/season_join_data/season_{year}.csv", index=False)
 
 

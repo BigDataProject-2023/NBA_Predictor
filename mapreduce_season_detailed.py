@@ -1,4 +1,6 @@
-# python mapreduce_season_detailed.py  season_data/season_20xx_detailed.csv --output-dir mapreduce\20xx_detailed_mapreduce 으로 실행
+# 실행방법 :
+# bash run_mapreduce.sh
+
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 import csv

@@ -1,3 +1,7 @@
+# 실행방법 :
+# python3.6 data_preProcessing.py -r hadoop  --hadoop-streaming-jar /usr/hdp/3.0.1.0-187/hadoop-mapreduce/hadoop-streaming.jar  --python-bin /usr/bin/python3.6# hadoop fs -copyFromLocal mapreduce/season_join_data /user/maria_dev/NBA_Predictor/mapreduce/
+# hadoop fs -copyFromLocal merge_all_data /user/maria_dev/NBA_Predictor/
+
 import pandas as pd
 import os
 
@@ -33,7 +37,6 @@ def preProcessing(year):
     ).drop(["date", "home_team", "away_team"], axis=1)
 
     # 조인된 데이터를 CSV 파일로 저장
-    os.makedirs("merge_all_data", exist_ok=True)
     result_data.to_csv(f"merge_all_data/nba_{year-2001}{year-2000}.csv", index=False)
 
 
