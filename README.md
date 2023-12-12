@@ -24,3 +24,6 @@ where the season for which data should be collected is given by the  ```season``
     scrapy crawl basketball-reference -a season=2020 ➡️ crawl command, change season args with when you want.
   ```
 - `merged data` : merge odds data & season data with [date, home, away] ➡️ data_preprocess.py
+
+## Result
+![result] (/result2.png)
