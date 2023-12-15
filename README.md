@@ -17,7 +17,7 @@ Use this cmd below in your terminal.
 Must change the csv or .py files' path if you needable
 ```sh
 python3 run.py -xgb -odds=fanduel (args for model & odds data)
-'''
+```
 
 ## Dataset
 - `odds data` : Odds data collecting with sbrscrape, scraping FanDuel odds data ➡️ test.py
