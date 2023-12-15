@@ -12,6 +12,13 @@ scrapy crawl basketball-reference -a season=2020
 ```
 where the season for which data should be collected is given by the  ```season``` argument (default is current season).
 
+## Run
+Use this cmd below in your terminal.
+Must change the csv or .py files' path if you needable
+```sh
+python3 run.py -xgb -odds=fanduel (args for model & odds data)
+'''
+
 ## Dataset
 - `odds data` : Odds data collecting with sbrscrape, scraping FanDuel odds data ➡️ test.py
   ```sh
