@@ -6,7 +6,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 # 데이터 불러오기
-data = pd.read_csv('/Users/bagjaeyun/Desktop/basketball_reference_webcrawler-master/merged_data/merged_data_2223.csv')
+data = pd.read_csv('merged_data/merged_data_2223.csv')
+
+ㅊ#Feature 다른 조합으로 생각해야함 => 지금은 확률로 확률을 예측하는 느낌
+#원본 데이터의 FT, 3GT, Home_team, AVG_WIN 이런걸로 구성해야
+#현재 사용하는 피처는 나중에 drop하고 prediction을 해야할 거 같음
+
 
 # 'OU' 대신 'OU-Cover' 종속 변수 생성
 data['OU-Cover'] = data.apply(lambda row: 2 if row['home_score'] + row['away_score'] == row['OU']

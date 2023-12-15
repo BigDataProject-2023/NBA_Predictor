@@ -6,10 +6,14 @@ from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler
 
-data = pd.read_csv('/Users/bagjaeyun/Desktop/basketball_reference_webcrawler-master/merged_data/merged_data_2223.csv')
+data = pd.read_csv('merged_data/merged_data_2223.csv')
 
 # 'home_score - away_score'가 0보다 크면 1, 아니면 0으로 하는 'Home-Team-Win' 생성
 data['Home-Team-Win'] = (data['home_score'] - data['away_score'] > 0).astype(int)
+
+#Feature 다른 조합으로 생각해야함 => 지금은 확률로 확률을 예측하는 느낌
+#원본 데이터의 FT, 3GT, Home_team, AVG_WIN 이런걸로 구성해야
+#현재 사용하는 피처는 나중에 drop하고 prediction을 해야할 거 같음
 
 # 선택된 특성 (예시로 일부 특성만 선택)
 selected_features = ['Home_Prob', 'Away_Prob', 'Home_Odds', 'Away_Odds']

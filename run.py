@@ -50,7 +50,7 @@ def createTodaysGames(games, odds):
 
 
 def main():
-    data = pd.read_csv('/Users/bagjaeyun/Desktop/basketball_reference_webcrawler-master/todayodds_combined.csv')
+    data = pd.read_csv('todayodds_combined.csv')
 
     odds = None
     if args.odds:
@@ -58,7 +58,7 @@ def main():
         games = create_todays_games_from_odds(odds)
 
         #print(f"odds:{odds}")
-        #print(f"games:{games}")
+        print(f"games:{games}")
 
         if len(games) == 0:
             print("No games found.")
@@ -72,35 +72,20 @@ def main():
             print(f"------------------{args.odds} odds data------------------")
             for g in odds.keys():
                 home_team, away_team = g.split(":")
-                print(f"{away_team} ({odds[g][away_team]['money_line_odds']}) @ {home_team} ({odds[g][home_team]['money_line_odds']})")
+                print(f"{home_team} ({odds[g][home_team]['money_line_odds']}) @ {away_team} ({odds[g][away_team]['money_line_odds']})")
     
-    # if args.nn:
-        #print("------------Neural Network Model Predictions-----------")
-        #data = tf.keras.utils.normalize(data, axis=1)
-        #NN_Runner.nn_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds, args.kc)
-        #print("-------------------------------------------------------")
+
     todays_games_uo,  home_team_odds, away_team_odds = createTodaysGames(games,odds)
     
     if args.xgb:
         print("---------------XGBoost Model Predictions---------------")
         xgb_runner.xgb_runner(data, games, todays_games_uo,  home_team_odds, away_team_odds)
         print("-------------------------------------------------------")
-    #if args.A:
-        #print("---------------XGBoost Model Predictions---------------")
-        #XGBoost_Runner.xgb_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds, args.kc)
-        #print("-------------------------------------------------------")
-        #data = tf.keras.utils.normalize(data, axis=1)
-        #print("------------Neural Network Model Predictions-----------")
-        #NN_Runner.nn_runner(data, todays_games_uo, frame_ml, games, home_team_odds, away_team_odds, args.kc)
-        #print("-------------------------------------------------------")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Model to Run')
     parser.add_argument('-xgb', action='store_true', help='Run with XGBoost Model')
-    parser.add_argument('-nn', action='store_true', help='Run with Neural Network Model')
-    parser.add_argument('-A', action='store_true', help='Run all Models')
     parser.add_argument('-odds', help='Sportsbook to fetch from. (fanduel, draftkings, betmgm, pointsbet, caesars, wynn, bet_rivers_ny')
-    parser.add_argument('-kc', action='store_true', help='Calculates percentage of bankroll to bet based on model edge')
     args = parser.parse_args()
     main()

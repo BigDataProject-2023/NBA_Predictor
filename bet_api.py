@@ -1,4 +1,4 @@
-#해외 사이트 배당률 있는 경기만 가져옴
+#crawling odds data 
 '''
 import os
 import pandas as pd
@@ -71,16 +71,6 @@ else:
     print('available')
 
 
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-#
-# Now get a list of live & upcoming games for the sport you want, along with odds for different bookmakers
-# This will deduct from the usage quota
-# The usage quota cost = [number of markets specified] x [number of regions specified]
-# For examples of usage quota costs, see https://the-odds-api.com/liveapi/guides/v4/#usage-quota-costs
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-
 odds_response = requests.get(f'https://api.the-odds-api.com/v4/sports/{SPORT}/odds', params={
     'api_key': API_KEY,
     'regions': REGIONS,
@@ -143,6 +133,3 @@ with open(csv_file_path, mode='w', newline='') as csv_file:
                         'point': outcome.get('point', None),  # 'point' 키가 없으면 None으로 기본값 설정
                         'win_prob': 1/outcome['price']
                     })
-
-    
-# 오늘 경기 배당률
